@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  pg:
+    container_name: base
+    image: postgres:latest
+    restart: 'no'
+    environment:
+      POSTGRES_DATABASE: 'base'
+      POSTGRES_USER: 'base'
+      POSTGRES_PASSWORD: 'base'
+    ports:
+      - '5432:5432'
