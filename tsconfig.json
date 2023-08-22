@@ -22,7 +22,6 @@
             "@configs/*": ["configs/*"],
             "@constants/*": ["constants/*"],
             "@entities/*": ["entities/*"],
-            "@interfaces/*": ["interfaces/*"],
             "@modules/*": ["modules/*"],
             "@shared/*": ["shared/*"]
         }

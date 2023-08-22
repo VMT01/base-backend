@@ -11,7 +11,6 @@
         "^@configs/(.*)$",
         "^@constants/(.*)$",
         "^@entities/(.*)$",
-        "^@interfaces/(.*)$",
         "^@modules/(.*)$",
         "^@shared/(.*)$",
         "^[./]"

@@ -1,9 +1,9 @@
 import { applyDecorators, Delete, Get, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { IMethod } from '@shared/interfaces/method.interface';
 
-export const Method = ({ method, path, statusCode, description, response }: IMethod) => {
+export const Method = ({ method, path, requireToken, statusCode, description, response }: IMethod) => {
     let MethodDecorator: MethodDecorator;
     switch (method) {
         case 'GET':
@@ -18,6 +18,16 @@ export const Method = ({ method, path, statusCode, description, response }: IMet
         case 'DELETE':
             MethodDecorator = Delete(path);
             break;
+    }
+
+    if (requireToken) {
+        return applyDecorators(
+            MethodDecorator,
+            HttpCode(statusCode || HttpStatus.OK),
+            ApiOperation({ summary: description }),
+            ApiResponse({ status: statusCode, type: response }),
+            ApiBearerAuth(),
+        );
     }
 
     return applyDecorators(

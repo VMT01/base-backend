@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { toChecksumAddress } from 'web3-utils';
 
-import { ETableName } from '@constants/entity.constant';
+import { ERole, ETableName } from '@constants/entity.constant';
 
 import { IUser } from '@shared/interfaces/user.interface';
 import { BaseEntity } from '@shared/model/base.entity';
@@ -21,6 +21,9 @@ export class User extends BaseEntity implements IUser {
     @Column({ nullable: true })
     @Exclude({ toPlainOnly: true })
     password: string;
+
+    @Column({ type: 'enum', enum: ERole, default: ERole.USER })
+    role: ERole;
 
     @BeforeInsert()
     beforeInsert() {

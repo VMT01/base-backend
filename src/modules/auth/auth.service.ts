@@ -31,7 +31,7 @@ export class AuthService {
             if (!this.validateSignature(address, signature)) throw new Error('Invalid signature');
             const user = await this.validateAddress(address);
             if (!user) throw new Error('User not found');
-            return await this.generateToken({ userId: user.id });
+            return await this.generateToken({ userId: user.id, role: user.role });
         } catch (err) {
             log('auth.service.ts:32', [err.message], true);
             throw new HttpException(err.message, HttpStatus.UNAUTHORIZED);
@@ -42,7 +42,7 @@ export class AuthService {
         try {
             const user = await this.validateAccount(username, password);
             if (!user) throw new Error('User not found');
-            return await this.generateToken({ userId: user.id });
+            return await this.generateToken({ userId: user.id, role: user.role });
         } catch (err) {
             log('auth.service.ts:', [err.message], true);
             throw new HttpException(err.message, HttpStatus.UNAUTHORIZED);
