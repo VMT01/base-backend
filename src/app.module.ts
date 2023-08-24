@@ -1,21 +1,18 @@
-import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 
 import CONFIGS from '@configs/index';
 
 import MODULES from '@modules/index';
 
-import { LoggerMiddleware } from '@shared/middlewares/logger.middleware';
+import { AllExceptionsFilter } from '@shared/exception-filters/all.exception-filter';
+import { InterceptorModule } from '@shared/interceptors/interceptor.module';
 
 import { AppController } from './app.controller';
 
 @Module({
-    imports: [...CONFIGS, ...MODULES],
+    imports: [...CONFIGS, ...MODULES, InterceptorModule],
     controllers: [AppController],
-    providers: [{ provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor }],
+    providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
-export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
-    }
-}
+export class AppModule {}

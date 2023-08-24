@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { EControllerPath, EControllerTag } from '@constants/controller.constant';
+import { EMethodDescription } from '@constants/swagger.constant';
 
 import { Method } from '@shared/decorators/method.decorator';
 import { UserPermission } from '@shared/decorators/permission.decorator';
@@ -16,7 +17,7 @@ import { UserService } from './user.service';
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-    @Method({ method: 'GET', requireToken: true, description: 'User detail' })
+    @Method({ method: 'GET', requireToken: true, description: EMethodDescription.USER.DETAIL })
     getUserDetail(@UserPayload() { userId }: IJwtPayload) {
         return this.userService.getUserDetail(userId);
     }
