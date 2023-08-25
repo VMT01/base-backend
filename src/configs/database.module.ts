@@ -11,13 +11,50 @@ import { EEnvKey } from '@constants/env.constant';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
-                const options: TypeOrmModuleOptions = {
-                    type: 'postgres',
-                    host: configService.get<string>(EEnvKey.DB_HOST),
-                    port: configService.get<number>(EEnvKey.DB_PORT),
-                    username: configService.get<string>(EEnvKey.DB_USERNAME),
-                    password: configService.get<string>(EEnvKey.DB_PASSWORD),
-                    database: configService.get<string>(EEnvKey.DB_DATABASE),
+                const nodeEnv = configService.get<string>(EEnvKey.NODE_ENV);
+                const databaseConfig = { type: configService.get<string>(EEnvKey.DB_TYPE) };
+
+                switch (nodeEnv) {
+                    case 'development':
+                        Object.assign(databaseConfig, {
+                            host: configService.get<string>(EEnvKey.DB_HOST),
+                            port: configService.get<number>(EEnvKey.DB_PORT),
+                            username: configService.get<string>(EEnvKey.DB_USERNAME),
+                            password: configService.get<string>(EEnvKey.DB_PASSWORD),
+                            database: configService.get<string>(EEnvKey.DB_DATABASE),
+                        });
+                        break;
+                    case 'testing':
+                        Object.assign(databaseConfig, {
+                            host: configService.get<string>(EEnvKey.TEST_DB_HOST),
+                            port: configService.get<number>(EEnvKey.TEST_DB_PORT),
+                            username: configService.get<string>(EEnvKey.TEST_DB_USERNAME),
+                            password: configService.get<string>(EEnvKey.TEST_DB_PASSWORD),
+                            database: configService.get<string>(EEnvKey.TEST_DB_DATABASE),
+                        });
+                        break;
+                    case 'production':
+                        Object.assign(databaseConfig, {
+                            host: configService.get<string>(EEnvKey.PRODUCT_DB_HOST),
+                            port: configService.get<number>(EEnvKey.PRODUCT_DB_PORT),
+                            username: configService.get<string>(EEnvKey.PRODUCT_DB_USERNAME),
+                            password: configService.get<string>(EEnvKey.PRODUCT_DB_PASSWORD),
+                            database: configService.get<string>(EEnvKey.PRODUCT_DB_DATABASE),
+                        });
+                        break;
+                    default:
+                        Object.assign(databaseConfig, {
+                            host: configService.get<string>(EEnvKey.DB_HOST),
+                            port: configService.get<number>(EEnvKey.DB_PORT),
+                            username: configService.get<string>(EEnvKey.DB_USERNAME),
+                            password: configService.get<string>(EEnvKey.DB_PASSWORD),
+                            database: configService.get<string>(EEnvKey.DB_DATABASE),
+                        });
+                        break;
+                }
+
+                const options = {
+                    ...databaseConfig,
                     synchronize: true,
                     logging: true,
                     autoLoadEntities: true,
@@ -25,7 +62,7 @@ import { EEnvKey } from '@constants/env.constant';
                     entities: [__dirname + './../entities/**/*.entity.{ts,js}'],
                     migrations: [__dirname + './../database/migrations/*.{ts,js}'],
                 };
-                return options;
+                return options as TypeOrmModuleOptions;
             },
             dataSourceFactory: async options => {
                 const dataSource = await new DataSource(options).initialize();

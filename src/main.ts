@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -15,7 +16,9 @@ async function bootstrap() {
     app.setGlobalPrefix(configService.get<string>(EEnvKey.API_PREFIX));
     initSwagger(app, configService.get<string>(EEnvKey.SWAGGER_PATH));
 
-    await app.listen(configService.get<number>(EEnvKey.PORT));
-}
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
+    await app.listen(configService.get<number>(EEnvKey.PORT));
+    console.log(`Application is running on: ${await app.getUrl()}`);
+}
 bootstrap();
